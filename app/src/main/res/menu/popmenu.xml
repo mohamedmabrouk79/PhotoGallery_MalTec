@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item
+    android:title="@string/dowanload"
+    android:id="@+id/dowanload"
+    android:showAsAction="ifRoom|withText"
+    android:visible="true" />
+    <item
+        android:title="@string/set_as"
+        android:id="@+id/setas"
+        android:showAsAction="ifRoom|withText"
+        android:visible="true" />
+</menu>
