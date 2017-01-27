@@ -1,9 +1,12 @@
-package com.example.mohamedmabrouk.photogallery;
+package com.example.mohamedmabrouk.photogallery.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+
+import com.example.mohamedmabrouk.photogallery.fragments.PhotoPageFragment;
+import com.example.mohamedmabrouk.photogallery.fragments.SingleActivityFragment;
 
 /**
  * Created by moham on 03/09/2016.

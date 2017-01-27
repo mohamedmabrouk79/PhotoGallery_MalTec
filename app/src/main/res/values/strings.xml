@@ -6,7 +6,8 @@
     <string name="stop_polling">Stop polling</string>
     <string name="new_pictures_title">New PhotoGallery Pictures</string>
     <string name="new_pictures_text">You have new pictures in PhotoGallery.</string>
-    <string name="set_as">Set As</string>
+    <string name="set_as">Set As WallPaper</string>
     <string name="dowanload">Dowanload</string>
+    <string name="share">Share</string>
 
 </resources>

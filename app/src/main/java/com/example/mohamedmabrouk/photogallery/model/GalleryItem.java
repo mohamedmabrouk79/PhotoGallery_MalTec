@@ -1,4 +1,4 @@
-package com.example.mohamedmabrouk.photogallery;
+package com.example.mohamedmabrouk.photogallery.model;
 
 import android.net.Uri;
 
@@ -6,7 +6,7 @@ import android.net.Uri;
  * Created by Mohamed Mabrouk on 21/08/2016.
  */
 public class GalleryItem {
-private String mCaption;
+    private String mCaption;
     private String mUrl;
     private String mId;
     private String mOwner;

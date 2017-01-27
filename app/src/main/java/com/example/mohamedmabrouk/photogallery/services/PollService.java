@@ -1,4 +1,4 @@
-package com.example.mohamedmabrouk.photogallery;
+package com.example.mohamedmabrouk.photogallery.services;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -10,11 +10,14 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.os.SystemClock;
-import android.provider.Settings;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.net.ConnectivityManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+
+import com.example.mohamedmabrouk.photogallery.PhotoGalleryActivity;
+import com.example.mohamedmabrouk.photogallery.R;
+import com.example.mohamedmabrouk.photogallery.dataBase.QueryPreferences;
+import com.example.mohamedmabrouk.photogallery.model.FlickrFetchr;
+import com.example.mohamedmabrouk.photogallery.model.GalleryItem;
 
 import java.util.List;
 
@@ -48,7 +51,7 @@ public class PollService extends IntentService {
             return;
         }
 
-        String query=QueryPreferences.getStoredQuery(this);
+        String query= QueryPreferences.getStoredQuery(this);
         String lastResultId=QueryPreferences.getLastResultId(this);
         List<GalleryItem> items;
         if (query==null){

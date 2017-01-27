@@ -1,4 +1,4 @@
-package com.example.mohamedmabrouk.photogallery;
+package com.example.mohamedmabrouk.photogallery.fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -7,7 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.example.mohamedmabrouk.photogallery.services.PollService;
 
 /**
  * Created by moham on 02/09/2016.

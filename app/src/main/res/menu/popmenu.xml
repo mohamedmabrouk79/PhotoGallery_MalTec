@@ -10,4 +10,19 @@
         android:id="@+id/setas"
         android:showAsAction="ifRoom|withText"
         android:visible="true" />
+    <item
+        android:title="@string/share"
+        android:id="@+id/share"
+        android:showAsAction="ifRoom|withText"
+        android:visible="true" />
+    <item
+        android:title="Show Image "
+        android:id="@+id/show"
+        android:showAsAction="ifRoom|withText"
+        android:visible="true" />
+    <item
+        android:title="Delete"
+        android:id="@+id/delete"
+        android:showAsAction="ifRoom|withText"
+        android:visible="true" />
 </menu>

@@ -1,4 +1,4 @@
-package com.example.mohamedmabrouk.photogallery;
+package com.example.mohamedmabrouk.photogallery.dataBase;
 
 import android.content.Context;
 import android.content.SharedPreferences;

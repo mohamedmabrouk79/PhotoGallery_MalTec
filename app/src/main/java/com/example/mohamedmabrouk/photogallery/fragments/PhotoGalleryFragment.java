@@ -1,14 +1,18 @@
-package com.example.mohamedmabrouk.photogallery;
+package com.example.mohamedmabrouk.photogallery.fragments;
 
+import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,11 +23,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.support.v7.widget.SearchView;
+import android.widget.Toast;
 
+import com.example.mohamedmabrouk.photogallery.activity.PhotoPageActivity;
+import com.example.mohamedmabrouk.photogallery.R;
+import com.example.mohamedmabrouk.photogallery.dataBase.DBOpretion;
+import com.example.mohamedmabrouk.photogallery.dataBase.QueryPreferences;
+import com.example.mohamedmabrouk.photogallery.model.FlickrFetchr;
+import com.example.mohamedmabrouk.photogallery.model.GalleryItem;
+import com.example.mohamedmabrouk.photogallery.services.PollService;
+import com.example.mohamedmabrouk.photogallery.services.ThumbnailDownloader;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Mohamed Mabrouk on 21/08/2016.
@@ -34,6 +52,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
     public static List<GalleryItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mthumbnailDownloader;
     public String myquery=null;
+    private DBOpretion dbOpretion;
 
 
     public static PhotoGalleryFragment newInstance(){
@@ -42,6 +61,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      dbOpretion=new DBOpretion(getActivity());
        UpdateItems();
         setRetainInstance(true);
         Handler responsHandler=new Handler();
@@ -197,7 +217,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
 
     /*******    class for view holder     *********/
     private class PhotoHolder extends RecyclerView.ViewHolder {
-
+        private GalleryItem mItem;
         private ImageView mPhotoView;
         public PhotoHolder(View itemView) {
             super(itemView);
@@ -208,19 +228,87 @@ public class PhotoGalleryFragment extends VisibleFragment {
         public void bindDrawable(Drawable drawable){
             mPhotoView.setImageDrawable(drawable);
         }
+        private   String SaveImage(Bitmap bitmap) throws  Exception{
+            OutputStream outputStream;
+            File filePath= Environment.getExternalStorageDirectory();
+            File  file=new File(filePath.getAbsolutePath()+"/Download", UUID.randomUUID()+".png");
+            Toast.makeText(getActivity(), file+"", Toast.LENGTH_SHORT).show();
+            outputStream=new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG,100,outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            return String.valueOf(file);
+        }
         public void bindGalleryItem(final GalleryItem item) {
+           dbOpretion.insert(item.getUrl());
+            mItem=item;
             Picasso.with(getActivity()).load(item.getUrl()).placeholder(R.drawable.pp).into(mPhotoView);
             /********************** image view action **************/
+
             mPhotoView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                Intent intent=PhotoPageActivity.newIntent(getActivity(),item.getPageUri());
+                Intent intent= PhotoPageActivity.newIntent(getActivity(),item.getPageUri());
                     startActivity(intent);
                 }
             });
-            FragmentManager fragmentManager=getFragmentManager();
-            ShowImageDailgoFragment fragment4=ShowImageDailgoFragment.newInstance(item.getUrl());
-          //  fragment4.show(fragmentManager,TAG);
+
+            mPhotoView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    PopupMenu popupMenu=new PopupMenu(getActivity(),mPhotoView);
+
+                    popupMenu.getMenuInflater().inflate(R.menu.popmenu,popupMenu.getMenu());
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            Bitmap bitmap=ThumbnailDownloader.getBitmap(mItem.getUrl());
+                            switch (item.getItemId()){
+                                case R.id.show:
+                                    FragmentManager fragmentManager=getFragmentManager();
+                                    ShowImageDailgoFragment fragment=ShowImageDailgoFragment.newInstance(mItem.getUrl());
+                                    fragment.show(fragmentManager,"mohamed");
+                                    return true;
+                                case R.id.delete:
+                                    dbOpretion.deleteItem(mItem.getUrl());
+                                    UpdateItems();
+                                    return true;
+                                case R.id.dowanload:
+                                    try {
+                                        SaveImage(bitmap);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    return true;
+                                case R.id.setas:
+                                    WallpaperManager manager=WallpaperManager.getInstance(getActivity());
+                                    try {
+                                        manager.setBitmap(bitmap);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return true;
+                                case R.id.share:
+                                    Intent intent=new Intent(Intent.ACTION_SEND);
+                                    intent.setType("image/*");
+
+                                    try {
+                                        intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(SaveImage(ThumbnailDownloader.getBitmap(mItem.getUrl()))));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    startActivity(Intent.createChooser(intent,"Choose App"));
+                                    return true;
+                            }
+                            return true;
+                        }
+                    });
+                    popupMenu.show();
+                    return true;
+                }
+            });
+
         }
     }
 
@@ -248,7 +336,9 @@ public class PhotoGalleryFragment extends VisibleFragment {
         @Override
         public int getItemCount() {
             return mGalleryItems.size();
+
         }
+
     }
 
 

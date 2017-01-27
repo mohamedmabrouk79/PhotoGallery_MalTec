@@ -1,10 +1,12 @@
-package com.example.mohamedmabrouk.photogallery;
+package com.example.mohamedmabrouk.photogallery.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
+
+import com.example.mohamedmabrouk.photogallery.R;
 
 /**
  * Created by Mohamed Mabrouk on 21/08/2016.
